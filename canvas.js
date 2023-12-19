@@ -1,27 +1,18 @@
 var canvas = document.querySelector('canvas');
-
+//캔버스 크기
 canvas.width = window.innerWidth - 10;
 canvas.height = window.innerHeight - 10;
 
 var c = canvas.getContext('2d');
 document.getElementById('canvas').style.backgroundColor = 'rgba(240, 240, 240, 1)';
 
+//마우스 좌표
 var mouse = {
     x: undefined,
     y: undefined
 }
 
-window.addEventListener('mousemove',
-    function (event) {
-        mouse.x = event.x;
-        mouse.y = event.y;
-    });
-window.addEventListener('resize', function () {
-    canvas.width = window.innerWidth -10;
-    canvas.height = window.innerHeight-10;
-    init();
-});
-//Color
+//Color 테마들
 var colorTheme1 = [
     '#9591F2',
     '#111BD9',
@@ -53,47 +44,43 @@ var colorTheme4 = [
 var colorThemeArray = [
     colorTheme1, colorTheme2, colorTheme3, colorTheme4
 ];
-var j = 0;
-addEventListener('click', function () {
-    j = j + 1;
-    if (j == colorThemeArray.length) {
-        j = 0;
-    };
-    currentColorTheme = colorThemeArray[j];
+
+//화면 크기를 조절할 때마다 캔버스 크기를 맞춰줌
+window.addEventListener('resize', function () {
+    canvas.width = window.innerWidth - 10;
+    canvas.height = window.innerHeight - 10;
     init();
-    }
+});
+//마우스 위치를 변수로 가져옴
+window.addEventListener('mousemove',
+    function (event) {
+        mouse.x = event.x;
+        mouse.y = event.y;
+    });
+//클릭할 때 색상테마 변경
+var themeNumber = 0;
+var currentColorTheme = colorThemeArray[themeNumber];
+window.addEventListener('click', function () {
+    themeNumber = themeNumber + 1;
+    if (themeNumber == colorThemeArray.length) {
+        themeNumber = 0;
+    };
+    currentColorTheme = colorThemeArray[themeNumber];
+    init();
+}
 );
-var currentColorTheme = colorThemeArray[j];
-
-//여러 개 그리고 싶어요! + 매 번 색이 달랐으면 좋겠어요!
-// for (let i = 0; i < 1000; i++) {
-//     var x = Math.random() * window.innerWidth;
-//     var y = Math.random() * window.innerHeight;
-//     var radius = Math.random() * 80;
-//     var r = Math.random() * 255;
-//     var g = Math.random() * 255;
-//     var b = Math.random() * 255;
-//     var a = Math.random();
-
-//     c.beginPath();
-//     c.arc(x, y, radius, 0, Math.PI * 2, false);
-//     c.fillStyle = 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')';
-//     c.fill();
-// }
-
+//더블클릭 하면 반짝이게 변경
+var glitterToggle = false;
+window.addEventListener('dblclick', function () {
+    glitterToggle = !glitterToggle;
+    init();
+}
+);
 
 //init
-var circleArray = [];
 function init() {
     circleArray = [];
-    for (var i = 0; i < 1000; i++) {
-        var dx = (Math.random() - 0.5) * 10;
-        var dy = (Math.random() - 0.5) * 10;
-        var radius = (Math.random() * 2) + 1;
-        var x = Math.random() * (innerWidth - 2 * radius) + radius;
-        var y = Math.random() * (innerHeight - 2 * radius) + radius;
-        circleArray.push(new Circle(x, y, radius, dx, dy));
-    }
+    makeCircle(1000);
 }
 
 //Circle 컨스트럭터
@@ -107,19 +94,20 @@ function Circle(x, y, radius, dx, dy) {
     this.minRadius = radius;
     this.growVelocity = 10;
     this.shrinkVelocity = 1;    //원의 최소크기보다 작아지는 속도가 크면 안됨!
+    this.glitter = false;
     this.fillColor = currentColorTheme[Math.floor(Math.random() * currentColorTheme.length)];
     this.strokeColor = currentColorTheme[Math.floor(Math.random() * currentColorTheme.length)];
-
+    //그리기 매소드
     this.draw = function () {
         c.beginPath();
         c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-        // this.fillColor = currentColorTheme[Math.floor(Math.random() * currentColorTheme.length)];    //번쩍번쩍
+        if (this.glitter == true) { this.fillColor = currentColorTheme[Math.floor(Math.random() * currentColorTheme.length)] };
         c.fillStyle = this.fillColor;
         c.strokeStyle = this.strokeColor;
         c.fill();
         c.stroke();
     }
-
+    //업데이트 매소드
     this.update = function () {
         //튕기기
         if (this.x + this.radius > innerWidth || this.x - this.radius < 0) {
@@ -142,23 +130,29 @@ function Circle(x, y, radius, dx, dy) {
 
     }
 }
-// 원 여러개 만들기
+// 원 여러개 만들기 함수
 var circleArray = [];
-for (var i = 0; i < 1000; i++) {
-    var dx = (Math.random() - 0.5) * 10;
-    var dy = (Math.random() - 0.5) * 10;
-    var radius = (Math.random() * 2) + 1.5;                                 //원의 최소크기 설정
-    var x = Math.random() * (innerWidth - 2 * radius) + radius;
-    var y = Math.random() * (innerHeight - 2 * radius) + radius;
-    circleArray.push(new Circle(x, y, radius, dx, dy));
+function makeCircle(circleNumber) {
+    for (var circleNumber = 0; circleNumber < 1000; circleNumber++) {
+        var dx = (Math.random() - 0.5) * 10;
+        var dy = (Math.random() - 0.5) * 10;
+        var radius = (Math.random() * 2) + 1.5;     //원의 최소크기 설정
+        var x = Math.random() * (innerWidth - 2 * radius) + radius;
+        var y = Math.random() * (innerHeight - 2 * radius) + radius;
+        circleArray.push(new Circle(x, y, radius, dx, dy));
+        if (glitterToggle == true) {
+            circleArray[circleNumber].glitter = true;
+        }
+    }
 }
+makeCircle(1000);
 
 
 //Animate
 function animate() {
     requestAnimationFrame(animate);
     c.clearRect(0, 0, innerWidth, innerHeight);
-    for (var i = 0; i < circleArray.length; i++) {
+    for (let i = 0; i < circleArray.length; i++) {
         circleArray[i].update();
         circleArray[i].draw();
     }
