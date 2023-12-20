@@ -80,7 +80,7 @@ window.addEventListener('dblclick', function () {
 //init (원 개수 여기서 설정)
 function init() {
     circleArray = [];
-    makeCircle(50);
+    makeCircle(1000);
 }
 
 //Circle 컨스트럭터
