@@ -77,10 +77,10 @@ window.addEventListener('dblclick', function () {
 }
 );
 
-//init
+//init (원 개수 여기서 설정)
 function init() {
     circleArray = [];
-    makeCircle(1000);
+    makeCircle(50);
 }
 
 //Circle 컨스트럭터
@@ -133,7 +133,7 @@ function Circle(x, y, radius, dx, dy) {
 // 원 여러개 만들기 함수
 var circleArray = [];
 function makeCircle(circleNumber) {
-    for (var circleNumber = 0; circleNumber < 1000; circleNumber++) {
+    for (var i = 0; i < circleNumber; i++) {
         var dx = (Math.random() - 0.5) * 10;
         var dy = (Math.random() - 0.5) * 10;
         var radius = (Math.random() * 2) + 1.5;     //원의 최소크기 설정
@@ -141,11 +141,10 @@ function makeCircle(circleNumber) {
         var y = Math.random() * (innerHeight - 2 * radius) + radius;
         circleArray.push(new Circle(x, y, radius, dx, dy));
         if (glitterToggle == true) {
-            circleArray[circleNumber].glitter = true;
+            circleArray[i].glitter = true;
         }
     }
 }
-makeCircle(1000);
 
 
 //Animate
@@ -158,3 +157,4 @@ function animate() {
     }
 }
 animate();
+init();
